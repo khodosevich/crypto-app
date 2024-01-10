@@ -1,0 +1,6 @@
+node_modules
+.idea
+built
+public
+.DS_Store
+.build
