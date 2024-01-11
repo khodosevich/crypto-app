@@ -1,73 +1,119 @@
 import { Box } from "@mui/material"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { methods } from "../api/methods"
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
-import { NavLink } from "react-router-dom"
+import { Table, TableBody, TableContainer, Paper, Pagination } from '@mui/material'
+import CoinRow from "./CoinRow"
+import { CoinType } from "../api/types"
+import HeaderTable from "./HeaderTable"
+import SearchComponent from "./SearchComponent"
+import { FavouriteCoinsContext } from "./Home"
 
 const CoinTable = () => {
 
+    const { favouriteCoins } = useContext(FavouriteCoinsContext)
+
     const [coins, setCoins] = useState({ data: [] })
 
+    const [search, setSearch] = useState<string | null>("")
+    const [isSearch, setIsSearch] = useState(false)
+
+    const [searchingCoins, setSearchingCoins] = useState<CoinType | null>(null)
+
+    const handlerSearch = async () => {
+
+        setIsSearch(true)
+
+        if (search === "") {
+            setIsSearch(false)
+            return
+        } else {
+
+            try {
+
+                const coin = coins.data.filter((coin: CoinType) => coin.id === search.toLowerCase())
+
+                console.log(coin)
+
+                const id = coin[0].id
+
+                console.log(id)
+
+                const data = await methods.getCoin(id)
+                    .then(res => res.data)
+                    .catch(err => console.log(err))
+                    .finally(() => setSearch(""))
+                setSearchingCoins(data.data)
+
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+    }
+
     const fetchCoins = async () => {
-       
         const data = await methods.getCoins().then(res => res.data).catch(err => console.log(err))
         console.log(data)
         setCoins(data)
+    }
+
+    const [isSortByPrice, setIsSortByPrice] = useState(false)
+    const sortByPrice = () => {
+        setIsSortByPrice(!isSortByPrice)
+
+        if (isSortByPrice) {
+            const sortedCoins = coins.data.sort((a: CoinType, b: CoinType) => b.priceUsd - a.priceUsd)
+            setCoins({ data: sortedCoins })
+        } else {
+            const sortedCoins = coins.data.sort((a: CoinType, b: CoinType) => a.priceUsd - b.priceUsd)
+            setCoins({ data: sortedCoins })
+        }
+    }
+
+    const sortDefault = () => {
+        fetchCoins()
+    }
+
+    const sortByChange = () => {
+        const sortedCoins = coins.data.sort((a: CoinType, b: CoinType) => b.changePercent24Hr - a.changePercent24Hr)
+        setCoins({ data: sortedCoins })
     }
 
     useEffect(() => {
         fetchCoins()
     }, [])
 
-    // "id": "bitcoin",
-    // "rank": "1",
-    // "symbol": "BTC",
-    // "name": "Bitcoin",
-    // "supply": "17193925.0000000000000000",
-    // "maxSupply": "21000000.0000000000000000",
-    // "marketCapUsd": "119150835874.4699281625807300",
-    // "volumeUsd24Hr": "2927959461.1750323310959460",
-    // "priceUsd": "6929.8217756835584756",
-    // "changePercent24Hr": "-0.8101417214350335",
-    // "vwap24Hr": "7175.0663247679233209"
-
     return (
         <Box>
-             <TableContainer component={Paper}>
+
+            <SearchComponent search={search} setSearch={setSearch} handlerSearch={handlerSearch} setIsSearch={setIsSearch} />
+
+            <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                    <TableRow>
-                        <TableCell>#</TableCell>
-                        <TableCell align="right">Id</TableCell>
-                        <TableCell align="right">Name</TableCell>
-                        <TableCell align="right">Price</TableCell>
-                        <TableCell align="right">Symbol</TableCell>
-                        <TableCell align="right">volumeUsd24Hr</TableCell>
-                    </TableRow>
-                    </TableHead>
+
+                    <HeaderTable sortByChange={sortByChange} sortDefault={sortDefault} sortByPrice={sortByPrice} isSortByPrice={isSortByPrice} />
+
                     <TableBody>
-                    {coins.data.map((coin) => (
-                        <TableRow
-                        key={coin.id}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                        <TableCell component="th" scope="row">
-                            {coin.rank}
-                        </TableCell>
-                        <TableCell align="right">
-                            <NavLink to={`/table/${coin.id}`}>
-                                {coin.id}
-                            </NavLink>    
-                        </TableCell>
-                        <TableCell align="right">{coin.name}</TableCell>
-                        <TableCell align="right">{Math.round(coin.priceUsd * 100) / 100}</TableCell>
-                        <TableCell align="right">{coin.symbol}</TableCell>
-                        <TableCell align="right">{coin.volumeUsd24Hr}</TableCell>
-                        </TableRow>
-                    ))}
+
+                        {
+                            isSearch &&
+                            <CoinRow key={searchingCoins?.id} isSearch={true} coin={searchingCoins} favourites={favouriteCoins} />
+                        }
+                        {
+                            coins.data.map((coin) => (
+                                <CoinRow key={coin.id} isSearch={false} coin={coin} favourites={favouriteCoins} />
+                            ))
+                        }
+
+
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Box display="flex" justifyContent="center" mt={2} mb={2}>
+                <Pagination count={10} color="primary" />
+            </Box>
+
         </Box>
     )
 }

@@ -9,7 +9,7 @@ ReactDOM.createRoot(
     .render(
         <React.StrictMode>
             <BrowserRouter>
-                <Home />    
+                <Home />
             </BrowserRouter>
         </React.StrictMode>
-);
+    );

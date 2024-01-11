@@ -21,6 +21,7 @@ export const methods = {
         return api.get("assets");  
     },
     getCoin(id: string) {
+        console.log(id)
         return api.get(`assets/${id}`);  
-    }
+    },
 }

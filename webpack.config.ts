@@ -34,5 +34,8 @@ module.exports = (argv) => {
                 filename: 'index.html',
             }),
         ],
+        devServer: {
+            historyApiFallback: true
+        }
     }
 }
