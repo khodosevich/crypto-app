@@ -1,8 +1,9 @@
-import { TableCell, TableRow, Typography, IconButton } from "@mui/material"
-import { NavLink, useNavigate } from "react-router-dom"
+import { TableCell, TableRow, Typography, IconButton,Box } from "@mui/material"
+import {  useNavigate } from "react-router-dom"
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { useContext } from "react";
 import { FavouriteCoinsContext } from "./Home";
+// import { getIcon } from "../api/methods";
 
 
 const CoinRow = ({ coin, favourites, isSearch }) => {
@@ -19,6 +20,23 @@ const CoinRow = ({ coin, favourites, isSearch }) => {
         addToFavourites(coin?.id)
     }
 
+    // const [logoUrl, setLogoUrl] = useState<string>("")
+
+    // const fetchLogo = async () => {
+
+    //     try {
+    //         const data = await getIcon(coin?.symbol)
+    //         setLogoUrl(data?.data?.image?.large)
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+
+    // }
+
+    // useEffect(() => {
+    //     fetchLogo()
+    // }, [])
+
     return (
         <TableRow
             onClick={() => redirectById(coin?.id)}
@@ -34,10 +52,12 @@ const CoinRow = ({ coin, favourites, isSearch }) => {
                 <Typography>{coin?.rank}</Typography>
             </TableCell>
             <TableCell align="left">
-                <NavLink style={{ textDecoration: "none", color: "black", fontSize: "18px" }} to={`/table/${coin?.id}`}>
-                    {coin?.name}
-                </NavLink>
-                <span style={{ marginLeft: "5px", color: "gray" }}>{coin?.symbol}</span>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {/* <img src={logoUrl} alt="logo" style={{ width: "25px", height: "25px", marginRight: "5px" }} /> */}
+                    <Typography>{coin?.name}</Typography>
+                    <span style={{ marginLeft: "5px", color: "gray" }}>{coin?.symbol}</span>
+                </Box>
+             
             </TableCell>
             <TableCell align="left">
                 <Typography>
@@ -60,7 +80,14 @@ const CoinRow = ({ coin, favourites, isSearch }) => {
             </TableCell>
             <TableCell align="right">
                 <Typography sx={{ color: coin?.changePercent24Hr > 0 ? "green" : "red" }}>
-                    {parseFloat(coin?.changePercent24Hr).toFixed(2)}%
+                    
+                    {
+                        coin?.changePercent24Hr !== null
+                        ?   <>
+                             {parseFloat(coin?.changePercent24Hr).toFixed(2)}%
+                        </> : "no data"
+                    }
+
                 </Typography>
             </TableCell>
         </TableRow>

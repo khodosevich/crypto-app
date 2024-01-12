@@ -6,7 +6,7 @@ module.exports = (argv) => {
     return {
         mode: argv.mode,
         entry: {
-            main: path.resolve(__dirname, './src/main.tsx')
+            main: path.resolve(__dirname, './src/Main.tsx')
         },
         output: {
             path: path.resolve(__dirname, './build'),

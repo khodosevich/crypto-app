@@ -17,11 +17,19 @@ const api = axios.create({
 
 
 export const methods = {
-    getCoins() {
-        return api.get("assets");  
+    getCoins(currentPage: number, itemsPerPage: number) {
+        return api.get(`assets?offset=${(currentPage - 1) * itemsPerPage}&limit=${itemsPerPage}`);  
     },
     getCoin(id: string) {
         console.log(id)
         return api.get(`assets/${id}`);  
     },
+    getCoinPriceChart: (id, timeframe) => {
+        console.log(id, timeframe)
+        return api.get(`assets/${id}/history?interval=${timeframe}`);
+      },
+}
+
+export const getIcon = (id: string) => {
+    return axios.get(`https://api.coingecko.com/api/v3/coins/${id}`)
 }

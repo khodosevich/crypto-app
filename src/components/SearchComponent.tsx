@@ -1,6 +1,6 @@
 import { Box, Button, TextField } from "@mui/material"
 
-const SearchComponent = ({ search, setSearch, handlerSearch, setIsSearch }) => {
+const SearchComponent = ({ search, setSearch, handlerSearch, setIsSearch, isSearch }) => {
 
     return (
         <Box
@@ -31,7 +31,6 @@ const SearchComponent = ({ search, setSearch, handlerSearch, setIsSearch }) => {
                     borderRadius: "5px",
                     color: "white"
                 }}>
-
                 Search
             </Button>
 
@@ -39,13 +38,15 @@ const SearchComponent = ({ search, setSearch, handlerSearch, setIsSearch }) => {
                 onClick={() => setIsSearch(false)}
                 variant="contained"
                 color="error"
+                disabled={!isSearch}
                 sx={{
                     width: "10%",
                     height: "50px",
                     borderRadius: "5px",
-
                     color: "white"
-                }}>
+                }}
+                >
+
                 Cancel
             </Button>
         </Box>
