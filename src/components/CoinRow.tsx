@@ -1,9 +1,8 @@
-import { TableCell, TableRow, Typography, IconButton,Box } from "@mui/material"
-import {  useNavigate } from "react-router-dom"
+import { TableCell, TableRow, Typography, IconButton, Box } from "@mui/material"
+import { useNavigate } from "react-router-dom"
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { useContext } from "react";
 import { FavouriteCoinsContext } from "./Home";
-// import { getIcon } from "../api/methods";
 
 
 const CoinRow = ({ coin, favourites, isSearch }) => {
@@ -19,23 +18,6 @@ const CoinRow = ({ coin, favourites, isSearch }) => {
         e.stopPropagation();
         addToFavourites(coin?.id)
     }
-
-    // const [logoUrl, setLogoUrl] = useState<string>("")
-
-    // const fetchLogo = async () => {
-
-    //     try {
-    //         const data = await getIcon(coin?.symbol)
-    //         setLogoUrl(data?.data?.image?.large)
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-
-    // }
-
-    // useEffect(() => {
-    //     fetchLogo()
-    // }, [])
 
     return (
         <TableRow
@@ -53,11 +35,10 @@ const CoinRow = ({ coin, favourites, isSearch }) => {
             </TableCell>
             <TableCell align="left">
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                    {/* <img src={logoUrl} alt="logo" style={{ width: "25px", height: "25px", marginRight: "5px" }} /> */}
                     <Typography>{coin?.name}</Typography>
                     <span style={{ marginLeft: "5px", color: "gray" }}>{coin?.symbol}</span>
                 </Box>
-             
+
             </TableCell>
             <TableCell align="left">
                 <Typography>
@@ -80,12 +61,12 @@ const CoinRow = ({ coin, favourites, isSearch }) => {
             </TableCell>
             <TableCell align="right">
                 <Typography sx={{ color: coin?.changePercent24Hr > 0 ? "green" : "red" }}>
-                    
+
                     {
                         coin?.changePercent24Hr !== null
-                        ?   <>
-                             {parseFloat(coin?.changePercent24Hr).toFixed(2)}%
-                        </> : "no data"
+                            ? <>
+                                {parseFloat(coin?.changePercent24Hr).toFixed(2)}%
+                            </> : "no data"
                     }
 
                 </Typography>

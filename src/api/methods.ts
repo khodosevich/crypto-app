@@ -27,7 +27,10 @@ export const methods = {
     getCoinPriceChart: (id, timeframe) => {
         console.log(id, timeframe)
         return api.get(`assets/${id}/history?interval=${timeframe}`);
-      },
+    },
+    getTopCoins: () => {
+        return api.get(`assets?limit=3`);
+    }
 }
 
 export const getIcon = (id: string) => {

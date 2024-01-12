@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress, IconButton } from "@mui/material";
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { LineChart } from '@mui/x-charts/LineChart';
 import axios from "axios";
 import { methods } from "../api/methods";
 import { CoinType } from "../api/types";
+import { FavouriteCoinsContext } from "./Home";
 
 const Coin = () => {
     const { id } = useParams();
     const [coin, setCoin] = useState<CoinType | null>(null);
     const [logo, setLogo] = useState<string>("");
     const [loading, setLoading] = useState(true);
+
+    const { favouriteCoins, addToFavourites } = useContext(FavouriteCoinsContext)
 
     const fetchCoin = async () => {
         try {
@@ -55,7 +59,7 @@ const Coin = () => {
                 console.log(data)
 
                 setCoordinates(data.data.data)
-            
+
             }
 
         } catch (error) {
@@ -63,16 +67,9 @@ const Coin = () => {
         }
     };
 
-    // const timeHandler = (time: number) => {
-
-    //     const date = new Date(time);
-    //     const hours = date.getHours();
-    //     const minutes = date.getMinutes();
-    //     const seconds = date.getSeconds();
-    //     const formattedTime = `${hours}:${minutes}:${seconds}`;
-    //     return parseFloat(formattedTime)
-    // }
-
+    const handlerIconClick = () => {
+        addToFavourites(coin?.id)
+    }
 
     useEffect(() => {
         fetchGraphics();
@@ -100,26 +97,35 @@ const Coin = () => {
             ) : (
                 coin && (
                     <Box>
+                       
                         <img
                             style={{ width: "50px", height: "50px" }}
                             src={logo ? logo : "https://pbs.twimg.com/profile_images/1170840029758992390/RVydcfFF_400x400.jpg"}
                             alt="logo"
                         />
+                       
                         <Typography>{coin.id}</Typography>
                         <Typography>{coin.name}</Typography>
-                        <Typography>{coin.priceUsd}</Typography>
                         <Typography>{coin.symbol}</Typography>
+                        <Typography>{coin.rank}</Typography>
+                        <Typography>{coin.supply}</Typography>
+                        <Typography>{coin.priceUsd}</Typography>
+                        <Typography>{coin.marketCapUsd}</Typography>
+                        <Typography>{coin.maxSupply}</Typography>
                         <Typography>{coin.volumeUsd24Hr}</Typography>
+                        <IconButton
+                            onClick={handlerIconClick} aria-label="favourite">
+                            <StarBorderIcon sx={{ ":hover": { color: "gold" }, color: favouriteCoins.includes(coin?.id) ? "gold" : "grey" }} />
+                        </IconButton>
 
                         <LineChart
-                            
+
                             height={400}
                             width={1300}
 
                             xAxis={[
                                 {
                                     data: coordinates.map((item) => new Date(item.time)),
-                                    label: 'Время',
                                     scaleType: 'time',
                                 }
                             ]}
@@ -131,11 +137,8 @@ const Coin = () => {
                             series={[
                                 { data: coordinates.map((item) => parseFloat(item.priceUsd)), label: 'Цена', area: true }
                             ]}
-                          
+
                         />
-
-
-
                     </Box>
                 )
             )}
