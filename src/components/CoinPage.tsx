@@ -10,6 +10,7 @@ import { FavouriteCoinsContext } from "./Home";
 import InfoAboutCategory from "./InfoAboutCategory";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { createTheme, useMediaQuery } from "@mui/material";
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 const theme = createTheme();
 const Coin = () => {
@@ -57,15 +58,22 @@ const Coin = () => {
 
 
     const [coordinates, setCoordinates] = useState([]);
+    const [showGraph, setShowGraph] = useState<boolean>(true);
 
     const fetchGraphics = async () => {
         try {
             if (coin !== null) {
                 const data = await axios.get(`https://api.coincap.io/v2/assets/${coin?.id}/history?interval=d1`)
                 setCoordinates(data.data.data)
+                if(data.data.data.length > 0) {
+                    setShowGraph(true)
+                } else {
+                    setShowGraph(false)
+                }
             }
 
         } catch (error) {
+            setShowGraph(false)
             console.error('Error fetching graphics:', error);
         }
     };
@@ -109,7 +117,7 @@ const Coin = () => {
                             gap: "20px"
                         }
                     }}>
-                        <Box display="flex" justifyContent="start" alignItems="center">
+                        <Box display="flex" justifyContent="start" alignItems="center" marginTop="20px" >
 
                             <IconButton
                                 onClick={handlerIconClick} aria-label="favourite">
@@ -128,12 +136,15 @@ const Coin = () => {
 
                         </Box>
 
-                        <Typography>Rank: {coin.rank}</Typography>
-                        <Typography sx={{ display: "flex", alignItems: "center" }}>Pcice: ${typeof coin.priceUsd === 'number'
-                            ? coin.priceUsd.toFixed(2)
-                            : parseFloat(coin.priceUsd).toFixed(2)}
+                        <Typography sx={{ marginTop: "20px" }}>Rank: {coin.rank}</Typography>
+                        <Typography sx={{ display: "flex", alignItems: "center" }}>
+
+                            Pcice: $ {!(typeof coin.priceUsd === 'number') && !(Math.abs(coin.priceUsd) < 0.01)
+                                ? parseFloat(coin.priceUsd).toFixed(2)
+                                : coin.priceUsd
+                            }
                             <span style={{ color: coin.changePercent24Hr > 0 ? "green" : "red", display: "flex", alignItems: "center", marginLeft: "10px" }}>
-                                <ArrowDropDownIcon />
+                                {coin.changePercent24Hr > 0 ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
                                 {typeof coin.changePercent24Hr === 'number'
                                     ? coin.changePercent24Hr.toFixed(2)
                                     : parseFloat(coin.changePercent24Hr).toFixed(2)}
@@ -163,27 +174,32 @@ const Coin = () => {
 
                         <InfoAboutCategory title="Volume (24Hr)" value={coin.volumeUsd24Hr} info="A measure of how much of a cryptocurrency was traded in the last 24 hours." />
 
-                        <LineChart
+                        {
+                            showGraph
+                                ? <LineChart
 
-                            height={isSmallScreen ? 300 : 500}
-                            width={isSmallScreen ? 320 : 1300}
+                                    height={isSmallScreen ? 300 : 500}
+                                    width={isSmallScreen ? 320 : 1300}
 
-                            xAxis={[
-                                {
-                                    data: coordinates.map((item) => new Date(item.time)),
-                                    scaleType: 'time',
-                                }
-                            ]}
-                            yAxis={[
-                                {
-                                    data: coordinates.map((item) => parseFloat(item.priceUsd)),
-                                }
-                            ]}
-                            series={[
-                                { data: coordinates.map((item) => parseFloat(item.priceUsd)), label: 'Цена', area: true }
-                            ]}
+                                    xAxis={[
+                                        {
+                                            data: coordinates.map((item) => new Date(item.time)),
+                                            scaleType: 'time',
+                                        }
+                                    ]}
+                                    yAxis={[
+                                        {
+                                            data: coordinates.map((item) => parseFloat(item.priceUsd)),
+                                        }
+                                    ]}
+                                    series={[
+                                        { data: coordinates.map((item) => parseFloat(item.priceUsd)), label: 'Цена', area: true }
+                                    ]}
+                                /> : <Typography sx={{display: "flex", justifyContent: "center", alignItems: "center", margin: "100px 0"}} variant="h5">
+                                    Graph not found
+                                </Typography>
+                        }
 
-                        />
                     </Box>
                 )
             )}

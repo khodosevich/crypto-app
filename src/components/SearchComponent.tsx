@@ -9,7 +9,7 @@ const SearchComponent = ({ search, setSearch, handlerSearch, handlerClear, isSea
                 justifyContent: "center",
                 gap: 2,
                 alignItems: "center",
-                mb: 2,
+                margin:"35px 0",
 
                 "@media (max-width: 800px)"
                 : { flexDirection: "column",

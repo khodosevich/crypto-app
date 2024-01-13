@@ -10,7 +10,7 @@ module.exports = (argv) => {
         },
         output: {
             path: path.resolve(__dirname, './build'),
-            filename: "bungle.js"
+            filename: "bundle.js"
         },
         module:{
             rules: [
@@ -34,8 +34,5 @@ module.exports = (argv) => {
                 filename: 'index.html',
             }),
         ],
-        devServer: {
-            historyApiFallback: true
-        }
     }
 }

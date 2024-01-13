@@ -10,9 +10,9 @@ import { FavouriteCoinsContext } from "./Home"
 
 const CoinTable = () => {
 
-    const itemsPerPage = 50; 
+    const itemsPerPage = 50;
     const [currentPage, setCurrentPage] = useState<number>(1)
-    const [totalPages] = useState(Math.ceil(2296/itemsPerPage))
+    const [totalPages] = useState(Math.ceil(2296 / itemsPerPage))
 
     const { favouriteCoins } = useContext(FavouriteCoinsContext)
 
@@ -40,8 +40,8 @@ const CoinTable = () => {
 
                 const coin = coins.data.filter((coin: CoinType) => coin.id === search.toLowerCase())
 
-                if(coin.length ===  0) {                    
-                    if(!searchCoin){
+                if (coin.length === 0) {
+                    if (!searchCoin) {
                         setIsSearch(false)
                     }
                     setSearch("")
@@ -49,7 +49,7 @@ const CoinTable = () => {
                     setTimeout(() => setBadSearch(false), 3000)
                     return
                 }
-                
+
                 const id = coin[0].id
 
                 try {
@@ -58,10 +58,10 @@ const CoinTable = () => {
 
                     setSearchCoin(true)
 
-                }catch (error) {
+                } catch (error) {
                     setBadSearch(true)
                     console.log(error)
-                }finally {
+                } finally {
                     setSearch("")
                 }
 
@@ -82,13 +82,13 @@ const CoinTable = () => {
         try {
             setIsFeatching(true)
             const response = await methods.getCoins(currentPage, itemsPerPage);
-            
+
             setCoins(response.data);
-          }catch (error) {
+        } catch (error) {
             console.error('Ошибка при получении данных:', error);
-          } finally {
+        } finally {
             setIsFeatching(false)
-          }
+        }
     }
 
     const [isSortByPrice, setIsSortByPrice] = useState(false)
@@ -114,11 +114,11 @@ const CoinTable = () => {
     }
 
     const sortByName = () => {
-        const sortedCoins = coins.data.sort((a:CoinType,b:CoinType) => a.name.localeCompare(b.name))
+        const sortedCoins = coins.data.sort((a: CoinType, b: CoinType) => a.name.localeCompare(b.name))
         setCoins({ data: sortedCoins })
     }
 
-    const handlePageChange = (event,page: number) => {
+    const handlePageChange = (event, page: number) => {
         console.log(event)
         setCurrentPage(page)
     }
@@ -133,21 +133,26 @@ const CoinTable = () => {
 
             {
                 isFeatching &&
-                <Box sx={{display: "flex", justifyContent: "center", alignItems: "center", 
-                         width:"100vw" , height:"100vh", position: "absolute",
-                        top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: "999",
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        }}>
-                     <CircularProgress size={300} />
+                <Box sx={{
+                    display: "flex", justifyContent: "center", alignItems: "center",
+                    width: "100vw", height: "100vh", position: "absolute",
+                    top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: "999",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                }}>
+                    <CircularProgress size={300} />
                 </Box>
-               
+
             }
 
-            {
-                badSearch && <Alert  sx={{margin:"20px 0", position: "absolute", top: "0", left: "50%", minHeight: "50px", minWidth: "320px", transform: "translate(-50%, 0)",}} severity="error">Coin not found</Alert>
-            } 
+            <Box sx={{ position: "relative" }}>
+                {
+                    badSearch && <Alert sx={{ margin: "20px 0", position: "absolute", top: "-80px", left: "50%", minHeight: "50px", minWidth: "320px", transform: "translate(-50%, 0)", zIndex: "999" }} severity="error">Coin not found</Alert>
+                }
 
-            <SearchComponent search={search} setSearch={setSearch} handlerSearch={handlerSearch} handlerClear={handlerClear} isSearch={isSearch} />
+                <SearchComponent search={search} setSearch={setSearch} handlerSearch={handlerSearch} handlerClear={handlerClear} isSearch={isSearch} />
+
+            </Box>
+
 
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 350 }} aria-label="simple table">
@@ -172,12 +177,12 @@ const CoinTable = () => {
             </TableContainer>
 
             <Box display="flex" justifyContent="center" mt={2} mb={2}>
-                <Pagination 
+                <Pagination
                     count={totalPages}
                     page={currentPage}
                     onChange={handlePageChange}
                     color="primary"
-                 />
+                />
             </Box>
 
         </Box>

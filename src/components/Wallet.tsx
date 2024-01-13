@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { FavouriteCoinsContext } from "./Home"
-import { Box, Typography, Table, TableBody } from "@mui/material"
+import { Box, Typography, Table, TableBody,TableContainer, Paper } from "@mui/material"
 import { methods } from "../api/methods"
 import { CoinType } from "../api/types";
 import CoinRow from "./CoinRow";
@@ -35,13 +35,15 @@ const Wallet = () => {
         <Box>
 
             <Typography sx={{marginBottom: "20px"}} variant="h3">Your wallet:</Typography>
-            <Table>
-                <TableBody sx={{ border: "1px solid #e0e0e0"}}>
-                    {coins.map((coin) => (
-                        <CoinRow key={coin.id} coin={coin} isSearch={false} favourites={favouriteCoins} />
-                    ))}
-                </TableBody>
-            </Table>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 350 }}>
+                    <TableBody sx={{ border: "1px solid #e0e0e0"}}>
+                        {coins.map((coin) => (
+                            <CoinRow key={coin.id} coin={coin} isSearch={false} favourites={favouriteCoins} />
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
         </Box>
     );
