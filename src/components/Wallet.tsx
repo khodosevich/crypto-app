@@ -34,9 +34,9 @@ const Wallet = () => {
     return (
         <Box>
 
-            <Typography variant="h3">Your wallet:</Typography>
+            <Typography sx={{marginBottom: "20px"}} variant="h3">Your wallet:</Typography>
             <Table>
-                <TableBody>
+                <TableBody sx={{ border: "1px solid #e0e0e0"}}>
                     {coins.map((coin) => (
                         <CoinRow key={coin.id} coin={coin} isSearch={false} favourites={favouriteCoins} />
                     ))}

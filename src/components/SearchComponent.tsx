@@ -1,6 +1,6 @@
 import { Box, Button, TextField } from "@mui/material"
 
-const SearchComponent = ({ search, setSearch, handlerSearch, setIsSearch, isSearch }) => {
+const SearchComponent = ({ search, setSearch, handlerSearch, handlerClear, isSearch }) => {
 
     return (
         <Box
@@ -9,13 +9,21 @@ const SearchComponent = ({ search, setSearch, handlerSearch, setIsSearch, isSear
                 justifyContent: "center",
                 gap: 2,
                 alignItems: "center",
-                mb: 2
+                mb: 2,
+
+                "@media (max-width: 800px)"
+                : { flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }
             }}>
             <TextField
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 sx={{
                     width: "30%",
+                    minWidth: "300px",
+                    height: "50px",
                     backgroundColor: "white",
                     borderRadius: "5px"
                 }}
@@ -26,6 +34,7 @@ const SearchComponent = ({ search, setSearch, handlerSearch, setIsSearch, isSear
                 onClick={handlerSearch}
                 variant="contained"
                 sx={{
+                    minWidth: "150px",
                     width: "10%",
                     height: "50px",
                     borderRadius: "5px",
@@ -35,19 +44,19 @@ const SearchComponent = ({ search, setSearch, handlerSearch, setIsSearch, isSear
             </Button>
 
             <Button
-                onClick={() => setIsSearch(false)}
+                onClick={handlerClear}
                 variant="contained"
                 color="error"
                 disabled={!isSearch}
                 sx={{
+                    minWidth: "150px",
                     width: "10%",
                     height: "50px",
                     borderRadius: "5px",
                     color: "white"
                 }}
                 >
-
-                Cancel
+                Clear
             </Button>
         </Box>
     )

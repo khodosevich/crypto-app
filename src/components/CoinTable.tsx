@@ -1,4 +1,4 @@
-import { Box, CircularProgress } from "@mui/material"
+import { Alert, Box, CircularProgress } from "@mui/material"
 import { useState, useEffect, useContext } from "react"
 import { methods } from "../api/methods"
 import { Table, TableBody, TableContainer, Paper, Pagination } from '@mui/material'
@@ -19,7 +19,9 @@ const CoinTable = () => {
     const [coins, setCoins] = useState({ data: [] })
 
     const [search, setSearch] = useState<string | null>("")
-    const [isSearch, setIsSearch] = useState(false)
+    const [isSearch, setIsSearch] = useState<boolean>(false)
+    const [badSearch, setBadSearch] = useState<boolean>(false)
+    const [searchCoin, setSearchCoin] = useState<boolean>(false)
 
     const [searchingCoins, setSearchingCoins] = useState<CoinType | null>(null)
 
@@ -30,7 +32,7 @@ const CoinTable = () => {
         setIsSearch(true)
 
         if (search === "") {
-            setIsSearch(false)
+            setSearchCoin(false)
             return
         } else {
 
@@ -38,23 +40,41 @@ const CoinTable = () => {
 
                 const coin = coins.data.filter((coin: CoinType) => coin.id === search.toLowerCase())
 
-                console.log(coin)
-
+                if(coin.length ===  0) {                    
+                    if(!searchCoin){
+                        setIsSearch(false)
+                    }
+                    setSearch("")
+                    setBadSearch(true)
+                    setTimeout(() => setBadSearch(false), 3000)
+                    return
+                }
+                
                 const id = coin[0].id
 
-                console.log(id)
+                try {
+                    const data = await methods.getCoin(id).then(res => res.data)
+                    setSearchingCoins(data.data)
 
-                const data = await methods.getCoin(id)
-                    .then(res => res.data)
-                    .catch(err => console.log(err))
-                    .finally(() => setSearch(""))
-                setSearchingCoins(data.data)
+                    setSearchCoin(true)
+
+                }catch (error) {
+                    setBadSearch(true)
+                    console.log(error)
+                }finally {
+                    setSearch("")
+                }
 
             } catch (error) {
+                setBadSearch(true)
                 console.log(error)
             }
-
         }
+    }
+
+    const handlerClear = () => {
+        setIsSearch(false)
+        setSearchCoin(false)
     }
 
     const fetchCoins = async () => {
@@ -62,7 +82,6 @@ const CoinTable = () => {
         try {
             setIsFeatching(true)
             const response = await methods.getCoins(currentPage, itemsPerPage);
-            console.log(response.data.data)
             
             setCoins(response.data);
           }catch (error) {
@@ -94,6 +113,11 @@ const CoinTable = () => {
         setCoins({ data: sortedCoins })
     }
 
+    const sortByName = () => {
+        const sortedCoins = coins.data.sort((a:CoinType,b:CoinType) => a.name.localeCompare(b.name))
+        setCoins({ data: sortedCoins })
+    }
+
     const handlePageChange = (event,page: number) => {
         console.log(event)
         setCurrentPage(page)
@@ -113,24 +137,27 @@ const CoinTable = () => {
                          width:"100vw" , height:"100vh", position: "absolute",
                         top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: "999",
                         backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        
                         }}>
                      <CircularProgress size={300} />
                 </Box>
                
             }
-            
-            <SearchComponent search={search} setSearch={setSearch} handlerSearch={handlerSearch} setIsSearch={setIsSearch} isSearch={isSearch} />
+
+            {
+                badSearch && <Alert  sx={{margin:"20px 0", position: "absolute", top: "0", left: "50%", minHeight: "50px", minWidth: "320px", transform: "translate(-50%, 0)",}} severity="error">Coin not found</Alert>
+            } 
+
+            <SearchComponent search={search} setSearch={setSearch} handlerSearch={handlerSearch} handlerClear={handlerClear} isSearch={isSearch} />
 
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table sx={{ minWidth: 350 }} aria-label="simple table">
 
-                    <HeaderTable sortByChange={sortByChange} sortDefault={sortDefault} sortByPrice={sortByPrice} isSortByPrice={isSortByPrice} />
+                    <HeaderTable sortByChange={sortByChange} sortDefault={sortDefault} sortByPrice={sortByPrice} sortByName={sortByName} isSortByPrice={isSortByPrice} />
 
                     <TableBody>
 
                         {
-                            isSearch &&
+                            searchCoin &&
                             <CoinRow key={searchingCoins?.id} isSearch={true} coin={searchingCoins} favourites={favouriteCoins} />
                         }
                         {

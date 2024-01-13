@@ -1,0 +1,17 @@
+[
+    {
+        "id": "table",
+        "name": "Table",
+        "path": "/table"
+    },
+    {
+        "id": "home",
+        "name": "Home",
+        "path": "/"
+    },
+    {
+        "id": "wallet",
+        "name": "Wallet",
+        "path": "/wallet"
+    }
+]

@@ -59,23 +59,24 @@ const Home = () => {
                                 Основные возможности:
                             </Typography>
                             <Typography variant="body1" paragraph>
+                                - Простой и интуитивно понятный интерфейс.
+                            </Typography>
+                            <Typography variant="body1" paragraph>
                                 - Моментальный обзор актуальных данных о криптовалютах.
+                            </Typography>
+                            <Typography variant="body1" paragraph>
+                                - Поиск монеты по имени и просмотр данных о конкретной монете.
                             </Typography>
                             <Typography variant="body1" paragraph>
                                 - Управление избранными монетами и создание персонального портфеля.
                             </Typography>
                             <Typography variant="body1" paragraph>
-                                - Простой и интуитивно понятный интерфейс.
-                            </Typography>
-                            <Typography variant="body1" paragraph>
-                                - Доступны сортировки по цене и объему.
+                                - Доступны сортировки по цене(Price), по имени(Name), по рейтингу(Rank), по изменению(Change).
                             </Typography>
                         </Box>
                     }
 
-
                     <FavouriteCoinsContext.Provider value={{ favouriteCoins, setFavouriteCoins, addToFavourites }}>
-
                         <Routes>
                             <Route path="/table/*" element={<CoinTable />} />
                             <Route path="/table/:id" element={<Coin />} />

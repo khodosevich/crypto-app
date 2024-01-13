@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { NavLink } from "react-router-dom"
 import { CoinType } from "../api/types"
 import { methods } from "../api/methods"
+import links from "../components/NavLinks.json"
 
 const Header = () => {
 
@@ -11,7 +12,6 @@ const Header = () => {
     const fetchCoins = async () => {
         try {
             const data = await methods.getTopCoins()
-            console.log(data.data.data)
             setCoins(data.data.data)
         } catch (error) {
             console.log(error)
@@ -23,13 +23,28 @@ const Header = () => {
     }, [])
 
     return (
-        <Box display="flex" justifyContent="space-between" gap={2} alignItems="center" p={2} borderColor="divider" mb={2} >
-            <Box display="flex" justifyContent="center" gap={2}>
+        <Box  sx={{display:"flex", justifyContent:"space-between" , gap: "20px" , alignItems:"center",  padding: "10px", borderColor:"divider" , 
+        "@media (max-width: 800px)"
+                : { flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "20px"
+            }}} 
+        
+        >
+            <Box display="flex" justifyContent="center" gap={2} 
+                sx={{
+                    "@media (max-width: 800px)"
+                    : { flexWrap: "wrap"}
+                }}
+            >
                 {
                     coins.map((coin: CoinType) => {
                         return (
-                            <Box sx={{ cursor: "pointer" , gap: "20px", transition: "all 0.3s ease-in-out","&:hover": {transform: "scale(1.05)"}}}  key={coin.id}>
-                                <NavLink style={{ textDecoration: "none", color: "black", fontSize: "14px" }} to={`/table/${coin.id}`}>
+                            <Box sx={{ cursor: "pointer" , gap: "20px", fontSize: "14px", transition: "all 0.3s ease-in-out" ,
+                            "&:hover": {transform: "scale(1.05)"},}}  key={coin.id}>
+                                <NavLink 
+                                    style={{ textDecoration: "none", color: "black"}} to={`/table/${coin.id}`}>
                                     
                                     <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
                                         {coin.name}
@@ -41,7 +56,6 @@ const Header = () => {
                                         </span>
                                     </Box>
             
-                                
                                 </NavLink>
                             </Box>
                         )
@@ -49,9 +63,13 @@ const Header = () => {
                 }
             </Box>
             <Box display="flex" justifyContent="center" gap={2} alignItems="center">
-                <NavLink style={{ textDecoration: "none", color: "black", fontSize: "20px" }} to="/table">Table</NavLink>
-                <NavLink style={{ textDecoration: "none", color: "black", fontSize: "20px" }} to="/">Home</NavLink>
-                <NavLink style={{ textDecoration: "none", color: "black", fontSize: "20px" }} to="/wallet">Wallet</NavLink>
+                {
+                    links.map((link) =>  (
+                            <NavLink key={link.id} style={{ textDecoration: "none", color: "black", fontSize: "20px"}} to={link.path}>
+                                {link.name}
+                            </NavLink>
+                        ))
+                }
             </Box>
         </Box>
 
