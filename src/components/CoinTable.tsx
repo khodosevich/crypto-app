@@ -29,8 +29,6 @@ const CoinTable = () => {
 
     const handlerSearch = async () => {
 
-        setIsSearch(true)
-
         if (search === "") {
             setSearchCoin(false)
             return
@@ -55,8 +53,8 @@ const CoinTable = () => {
                 try {
                     const data = await methods.getCoin(id).then(res => res.data)
                     setSearchingCoins(data.data)
-
                     setSearchCoin(true)
+                    setIsSearch(true)
 
                 } catch (error) {
                     setBadSearch(true)
